@@ -1,37 +1,19 @@
 from fastapi import APIRouter
+import schemas
 
 router = APIRouter()
 
 
-# Публикация заказа в системе с полями:
-
-# name: str - имя заказа
-# district: str - район заказа.
-
-# В случае, если удалось найти подходящего курьера, запрос должен вернуть order_id (ид заказа) и courier_id( ид курьера). Если подходящего курьера нет, то запрос должен вернуть ошибку.
+# @router.post("/", response_model=schemas.orderResponce,status_code=201)
+# async def read_item(id: int):
+#     return {"item_id": id, "name": "first"}
 
 
-@router.post("/")
-async def read_item(id: int):
-    return {"item_id": id, "name": "first"}
+# @router.get("/{id}", response_model=schemas.orderInfoResponce,status_code=200)
+# def read_item(id: int):
+#     return {"item_id": id, "name": "first"}
 
 
-# 5) GET /order/{id}
-
-# Получение информации о заказе
-
-# courier_id: UUID | int
-# status: int - статус заказа. 1 - в работе, 2 - завершен
-
-@router.get("/{id}")
-def read_item(id: int):
-    return {"item_id": id, "name": "first"}
-
-
-# 6) POST /order/{id}
-
-# Завершить заказ. Должен вернуть ошибку если заказ уже завершен или такого заказа нет
-
-@router.put("/{id}")
-async def read_item(id: int):
-    return {"item_id": id, "name": "first"}
+# @router.put("/{id}", status_code=204)
+# async def read_item(id: int):
+#     return {"item_id": id, "name": "first"}

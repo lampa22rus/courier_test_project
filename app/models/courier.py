@@ -5,8 +5,8 @@ from models.database import Base
 class Courier(Base):
     __tablename__ = 'couriers'
     
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(20), unique=True)
-    districts = Column(ARRAY(String(20)), index=True)
+    id = Column(Integer,autoincrement=True ,primary_key=True, index=True)
+    name = Column(String(20), unique=True,nullable=False)
+    districts = Column(ARRAY(String(20)), index=True,nullable=False)
 
-    orders = relationship("Order", back_populates="user")
+    active_order = relationship("Order", back_populates="user")
