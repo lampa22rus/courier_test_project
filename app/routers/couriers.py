@@ -1,21 +1,26 @@
-from fastapi import APIRouter, Query
-from typing import Union
-from typing_extensions import Annotated
+from fastapi import APIRouter, Depends
+
+from sqlalchemy.ext.asyncio import AsyncSession
+from models.database import session_dependency
+
+from controllers.courierController import courierController
+
 import schemas
+
+from typing import List
 
 router = APIRouter()
 
-@router.get("/",status_code=201,response_model=schemas.courierBase )
-def read_item():
-    return {"id": 1, "name": "first"}
+@router.post("/",status_code=201)
+async def courier_create(courierData: schemas.courierCreate,db:AsyncSession= Depends(session_dependency)):
+    return await courierController.Create(courierData=courierData,db=db)
 
-# @router.get("/" , response_model=schemas.courierBase , status_code=200)
-# def items():
-#     return [{"id": 1, "name": "first"}]
+@router.get("/" , response_model=List[schemas.courierBase] , status_code=200)
+async def show_all(db:AsyncSession= Depends(session_dependency)):
+    return await courierController.showAll(db=db)
 
-# @router.get("/{id}",response_model=schemas.infoCourierResponce,status_code=200)
-# def read_item(id: int):
-#     return {"item_id": id, "name": "first"}
-
+@router.get("/{id}",response_model=schemas.infoCourierResponce,status_code=200)
+def showId(id: int,db:AsyncSession= Depends(session_dependency)):
+    return courierController.showId(id=id,db=db)
 
 
