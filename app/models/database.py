@@ -13,7 +13,7 @@ SQLALCHEMY_DATABASE_URL = 'postgresql+asyncpg://courier:courier@localhost/courie
 
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL,echo=True)
 
-async_session_factory = async_sessionmaker(autocommit=False, autoflush=False, bind=engine,class_=AsyncSession)
+async_session_factory = async_sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 async def session_dependency():
     session = async_scoped_session(session_factory=async_session_factory, scopefunc=current_task)

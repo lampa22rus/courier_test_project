@@ -14,7 +14,8 @@ load_dotenv()
 # access to the values within the .ini file in use.
 config = context.config
 
-config.set_main_option('sqlalchemy.url', os.environ['FASTAPI_DB_URL'])
+# config.set_main_option('sqlalchemy.url', os.environ['FASTAPI_DB_URL'])
+config.set_main_option('sqlalchemy.url', 'postgresql://courier:courier@localhost/courier')
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

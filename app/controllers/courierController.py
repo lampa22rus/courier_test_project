@@ -1,13 +1,17 @@
+
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 from models import Courier
-from sqlalchemy import select,func
+from sqlalchemy import select
+from sqlalchemy.sql import func
 from models import Order
 from sqlalchemy.orm import joinedload
-
+from enums.status import Status
+from services.avg import avg
 class courierController():
+    
     
     async def Create(db, courierData):
         courier: Courier = await db.scalar(select(Courier).where(Courier.name == courierData.name))
@@ -28,17 +32,33 @@ class courierController():
         return result.scalars().all()
     
     async def showId(id,db:AsyncSession):
-        # result: Result = await db.execute(select(Order)
-        #                                   .where(Order.id == id)
-        #                                   .options(joinedload(Order.courier)))
+        """
+        Тут я хотел использовать агрегативные функции, все работало успешно в синхронном режиме, но как только прекрутил асинхронный sqlachemy...
+        вобщем не удалось завести агрегативные функции
+        """
+        courier: Courier = await db.get(Courier, id)
+
+        if not courier:
+            raise HTTPException(
+                status_code=404,
+                detail="Courier not found"
+            )
+            
+        result = await db.execute(select(Order).where(Order.courier_id == id))
+        orders: Order = result.scalars().all()
         
-        # order: Order = result.scalars().first()
-        result: Result = await db.execute(funk)
-        courier = result.scalars().first()
+        avg_order_complete_time = avg.avg_time(orders)
+        avg_order_complete_day = avg.avg_day(orders)
+        
+        active_order = [order for order in orders if order.status == Status.works] 
+        
+        print(active_order)
         
         response ={
-            # 'active_order': order,
-            'avg_order_complete_time': 'time', #time
-            'avg_day_orders': 'int'
+            'active_order': active_order,
+            'avg_order_complete_time': avg_order_complete_time, 
+            'avg_day_orders': avg_order_complete_day
         }
         return response
+    
+    

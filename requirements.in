@@ -1,6 +1,5 @@
-fastapi
+fastapi[asunio]
 uvicorn[standard]
 sqlalchemy
 psycopg2-binary
 alembic
-asyncpg

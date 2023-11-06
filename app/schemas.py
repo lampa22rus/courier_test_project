@@ -10,11 +10,11 @@ class orderInfoResponce(BaseModel):
     status: int
     
 class infoOrderResponce(BaseModel):
-    order_id: int
-    order_name: str
+    order_id: int = Field(..., alias='id')
+    order_name: str = Field(..., alias='name')
     
-class infoCourierResponce(courierBase):
-    active_order: List[infoOrderResponce] = []
+class infoCourierResponce(BaseModel):
+    active_order: List[infoOrderResponce]
     avg_order_complete_time: time
     avg_day_orders: int
 
