@@ -8,10 +8,17 @@ from dotenv import load_dotenv
 Base = declarative_base()
 load_dotenv()
 
-SQLALCHEMY_DATABASE_URL = 'postgresql+asyncpg://courier:courier@localhost/courier'
-# SQLALCHEMY_DATABASE_URL = os.getenv("FASTAPI_DB_URL")
+# postgresql
 
-engine = create_async_engine(SQLALCHEMY_DATABASE_URL,echo=True)
+# SQLALCHEMY_DATABASE_URL = 'postgresql+asyncpg://courier:courier@localhost/courier'
+DB_USERNAME = os.getenv("DB_USERNAME")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_DATABASE = os.getenv("DB_DATABASE")
+DB_CONNECTION = os.getenv("DB_CONNECTION")
+
+SQLALCHEMY_DATABASE_URL = f'{DB_CONNECTION}+asyncpg://{DB_USERNAME}:{DB_PASSWORD}@postgres:5432/{DB_DATABASE}'
+
+engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
 
 async_session_factory = async_sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

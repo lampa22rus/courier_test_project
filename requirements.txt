@@ -13,6 +13,10 @@ anyio==3.7.1
     #   fastapi
     #   starlette
     #   watchfiles
+async-timeout==4.0.3
+    # via asyncpg
+asyncpg==0.29.0
+    # via -r requirements.in
 click==8.1.7
     # via uvicorn
 exceptiongroup==1.1.3

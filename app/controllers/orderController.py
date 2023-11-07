@@ -2,8 +2,7 @@
 from models import Courier
 from models import Order
 from sqlalchemy import select
-from sqlalchemy.orm import joinedload, selectinload
-from sqlalchemy.sql import not_
+from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException
@@ -47,9 +46,9 @@ class orderController():
             )
 
         return {
-            'courier_id': order.courier_id, 
+            'courier_id': order.courier_id,
             'status': Status(order.status).value
-            }
+        }
 
     async def orderUpdate(id, db: AsyncSession):
         result: Result = await db.execute(select(Order)

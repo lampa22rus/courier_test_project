@@ -21,7 +21,7 @@ async def show_all(db:AsyncSession= Depends(session_dependency)):
 
 
 @router.get("/{id}",response_model=schemas.infoCourierResponce,status_code=200)
-async def showId(id: int,db:AsyncSession= Depends(session_dependency)):
+async def show_Id(id: int,db:AsyncSession= Depends(session_dependency)):
     return await courierController.showId(id=id,db=db)
 
 
