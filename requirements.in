@@ -4,4 +4,4 @@ sqlalchemy
 psycopg2-binary
 alembic
 asyncpg
-sqlalchemy-async-seeder
+sqlalchemy-seeder
