@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 from models.database import session_dependency
 
 from controllers.courierController import courierController
@@ -12,16 +12,16 @@ from typing import List
 router = APIRouter()
 
 @router.post("/",status_code=201)
-async def courier_create(courierData: schemas.courierCreate,db:AsyncSession= Depends(session_dependency)):
-    return await courierController.Create(courierData=courierData,db=db)
+def courier_create(courierData: schemas.courierCreate,db:Session= Depends(session_dependency)):
+    return courierController.Create(courierData=courierData,db=db)
 
 @router.get("/" , response_model=List[schemas.courierBase] , status_code=200)
-async def show_all(db:AsyncSession= Depends(session_dependency)):
-    return await courierController.showAll(db=db)
+def show_all(db:Session= Depends(session_dependency)):
+    return courierController.showAll(db=db)
 
 
 @router.get("/{id}",response_model=schemas.infoCourierResponce,status_code=200)
-async def show_Id(id: int,db:AsyncSession= Depends(session_dependency)):
-    return await courierController.showId(id=id,db=db)
+def show_Id(id: int,db:Session= Depends(session_dependency)):
+    return courierController.showId(id=id,db=db)
 
 

@@ -13,8 +13,8 @@ import datetime
 
 class orderController():
 
-    async def orderCreate(order_in, db: AsyncSession):
-        result: Result = await db.execute(select(Courier)
+    def orderCreate(order_in, db: AsyncSession):
+        result: Result = db.execute(select(Courier)
                                           .where(Courier.districts.any(order_in.districts))
                                           .where(Courier.busy == False))
         courier = result.scalars().first()
@@ -32,12 +32,12 @@ class orderController():
             courier_id=courier.id,
         )
         db.add(order)
-        await db.commit()
-        await db.refresh(order)
+        db.commit()
+        db.refresh(order)
         return order
 
-    async def orderGet(id, db: AsyncSession):
-        order: Order = await db.get(Order, id)
+    def orderGet(id, db: AsyncSession):
+        order: Order = db.get(Order, id)
 
         if not order:
             raise HTTPException(
@@ -50,8 +50,8 @@ class orderController():
             'status': Status(order.status).value
         }
 
-    async def orderUpdate(id, db: AsyncSession):
-        result: Result = await db.execute(select(Order)
+    def orderUpdate(id, db: AsyncSession):
+        result: Result = db.execute(select(Order)
                                           .where(Order.id == id)
                                           .options(joinedload(Order.courier)))
 
@@ -73,6 +73,6 @@ class orderController():
         order.status = Status.complited
         order.courier.busy = False
 
-        await db.commit()
+        db.commit()
 
         return JSONResponse({'msg': 'success'})
