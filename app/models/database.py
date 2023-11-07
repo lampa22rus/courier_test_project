@@ -10,13 +10,13 @@ load_dotenv()
 
 # postgresql
 
-# SQLALCHEMY_DATABASE_URL = 'postgresql+asyncpg://courier:courier@localhost/courier'
-DB_USERNAME = os.getenv("DB_USERNAME")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_DATABASE = os.getenv("DB_DATABASE")
-DB_CONNECTION = os.getenv("DB_CONNECTION")
+SQLALCHEMY_DATABASE_URL = 'postgresql+psycopg2://courier:courier@localhost/courier'
+# DB_USERNAME = os.getenv("DB_USERNAME")
+# DB_PASSWORD = os.getenv("DB_PASSWORD")
+# DB_DATABASE = os.getenv("DB_DATABASE")
+# DB_CONNECTION = os.getenv("DB_CONNECTION")
 
-SQLALCHEMY_DATABASE_URL = f'{DB_CONNECTION}://{DB_USERNAME}:{DB_PASSWORD}@localhost/{DB_DATABASE}'
+# SQLALCHEMY_DATABASE_URL = f'{DB_CONNECTION}+psycopg2://{DB_USERNAME}:{DB_PASSWORD}@localhost/{DB_DATABASE}'
 
 
 

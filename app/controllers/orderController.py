@@ -3,7 +3,7 @@ from models import Courier
 from models import Order
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException
 from sqlalchemy.engine import Result
@@ -13,10 +13,8 @@ import datetime
 
 class orderController():
 
-    def orderCreate(order_in, db: AsyncSession):
-        result: Result = db.execute(select(Courier)
-                                          .where(Courier.districts.any(order_in.districts))
-                                          .where(Courier.busy == False))
+    def orderCreate(order_in, db:Session):
+        result: Result = db.query(Courier).where(Courier.districts.any(order_in.districts)).where(Courier.busy == False)
         courier = result.scalars().first()
         if not courier:
             raise HTTPException(
@@ -36,7 +34,7 @@ class orderController():
         db.refresh(order)
         return order
 
-    def orderGet(id, db: AsyncSession):
+    def orderGet(id, db: Session):
         order: Order = db.get(Order, id)
 
         if not order:
@@ -50,7 +48,7 @@ class orderController():
             'status': Status(order.status).value
         }
 
-    def orderUpdate(id, db: AsyncSession):
+    def orderUpdate(id, db: Session):
         result: Result = db.execute(select(Order)
                                           .where(Order.id == id)
                                           .options(joinedload(Order.courier)))

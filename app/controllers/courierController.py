@@ -2,7 +2,7 @@
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.engine import Result
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session
 from models import Courier
 from sqlalchemy import select
 from models import Order
@@ -12,29 +12,29 @@ from services.avg import avg
 
 class courierController():
 
-    async def Create(db, courierData):
-        courier: Courier = await db.scalar(select(Courier).where(Courier.name == courierData.name))
-        if courier:
+    def Create(db:Session, courierData):
+        result: Result = db.query(Courier).where(Courier.name == courierData.name).first()
+        if result:
             raise HTTPException(
                 status_code=409,
                 detail="The courier already exists"
             )
 
         courier: Courier = Courier(**courierData.model_dump())
+
         db.add(courier)
-        await db.commit()
-        return JSONResponse({'msg': 'success'})
+        db.commit()
+        return JSONResponse({'detail': 'success'})
 
-    async def showAll(db: AsyncSession):
-        result: Result = await db.execute(select(Courier))
-        return result.scalars().all()
+    def showAll(db:Session):
+        return db.query(Courier).all()
 
-    async def showId(id, db: AsyncSession):
+    def showId(id, db: Session):
         """
         Тут я хотел использовать агрегативные функции, все работало успешно в синхронном режиме, но как только прекрутил асинхронный sqlachemy...
         вобщем не удалось завести агрегативные функции
         """
-        courier: Courier = await db.get(Courier, id)
+        courier: Courier = db.get(Courier, id)
 
         if not courier:
             raise HTTPException(
@@ -42,7 +42,7 @@ class courierController():
                 detail="Courier not found"
             )
 
-        result = await db.execute(select(Order).where(Order.courier_id == id))
+        result = db.query(Order).where(Order.courier_id == id)
         orders: Order = result.scalars().all()
 
         avg_order_complete_time = avg.avg_time(orders)

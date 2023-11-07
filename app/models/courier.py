@@ -10,4 +10,4 @@ class Courier(Base):
     busy = Column(Boolean, default=False,nullable=False)
     districts = Column(ARRAY(String(20)), index=True,nullable=False)
 
-    active_order = relationship("Order", back_populates="courier")
+    orders = relationship("Order", back_populates="courier")
