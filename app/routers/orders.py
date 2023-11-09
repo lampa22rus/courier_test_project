@@ -1,5 +1,5 @@
 from fastapi import APIRouter,Depends
-from models.database import session_dependency
+from database import session_dependency
 from sqlalchemy.orm import Session
 from controllers.orderController import orderController
 import schemas

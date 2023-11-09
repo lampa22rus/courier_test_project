@@ -1,35 +1,33 @@
-
-from models import Courier
-from models import Order
-from sqlalchemy import select
+from database.models.order import Order
+from database.models.courier import Courier
+from sqlalchemy import not_
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm import Session
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException
-from sqlalchemy.engine import Result
 from enums.status import Status
 import datetime
 
 
 class orderController():
 
-    def orderCreate(order_in, db:Session):
-        result: Result = db.query(Courier).where(Courier.districts.any(order_in.districts)).where(Courier.busy == False)
-        courier = result.scalars().first()
+    def orderCreate(order_in, db: Session):
+        courier: Courier = db.query(Courier).filter(
+            Courier.districts.any(order_in.districts),
+            not_(Courier.orders.any(Order.status == Status.works)),
+        ).first()
+
         if not courier:
             raise HTTPException(
                 status_code=404,
                 detail="Сourier not found"
             )
-
-        courier.busy = True
-
+            
         order: Order = Order(
-            name=order_in.name,
-            districts=order_in.districts,
-            courier_id=courier.id,
+            **order_in.model_dump(),
+            created_at=datetime.datetime.utcnow()
         )
-        db.add(order)
+        courier.orders.append(order)
         db.commit()
         db.refresh(order)
         return order
@@ -43,23 +41,22 @@ class orderController():
                 detail="Order not found"
             )
 
-        return {
+        data = {
             'courier_id': order.courier_id,
             'status': Status(order.status).value
         }
 
-    def orderUpdate(id, db: Session):
-        result: Result = db.execute(select(Order)
-                                          .where(Order.id == id)
-                                          .options(joinedload(Order.courier)))
+        return data
 
-        if not result:
+    def orderUpdate(id, db: Session):
+
+        order: Order = db.query(Order).options(joinedload(Order.courier)).get(id)
+
+        if not order:
             raise HTTPException(
                 status_code=404,
                 detail="Order not found"
             )
-
-        order: Order = result.scalars().first()
 
         if (order.status == Status.complited):
             raise HTTPException(
@@ -67,10 +64,9 @@ class orderController():
                 detail="The order is completed"
             )
 
-        order.completed_at = datetime.datetime.utcnow()
+        order.execution_time =  datetime.datetime.utcnow()-order.created_at
         order.status = Status.complited
-        order.courier.busy = False
 
         db.commit()
 
-        return JSONResponse({'msg': 'success'})
+        return JSONResponse({'detail': 'success'})

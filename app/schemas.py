@@ -1,6 +1,6 @@
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict,Union
 from pydantic import BaseModel, Field
-from datetime import time
+from datetime import time , timedelta
 
 class courierBase(BaseModel):
     id: int
@@ -11,16 +11,16 @@ class orderInfoResponce(BaseModel):
     status: int
     
 class infoOrderResponce(BaseModel):
-    order_id: int = Field(..., alias='id')
-    order_name: str = Field(..., alias='name')
+    order_id: int = Field(alias='id')
+    order_name: str = Field(alias='name')
     
 class infoCourierResponce(BaseModel):
-    active_order: List[infoOrderResponce]
+    active_order: Optional[Union[infoOrderResponce, None]]
     avg_order_complete_time: time
     avg_day_orders: int
 
 class orderResponce(BaseModel):
-    order_id:int = Field(..., alias='id')
+    id:int 
     courier_id:int
   
     class Config:

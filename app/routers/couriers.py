@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from sqlalchemy.orm import Session
-from models.database import session_dependency
+from database import session_dependency
 
 from controllers.courierController import courierController
 
